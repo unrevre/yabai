@@ -159,13 +159,16 @@ static void area_make_pair(enum window_node_split split, int gap, float ratio, s
         *right_area = *parent_area;
         right_area->x += (left_area->w + gap);
         right_area->w = (int)((parent_area->w - gap) * (1 - ratio));
-    } else {
+    } else if (split == SPLIT_X) {
         *left_area = *parent_area;
         left_area->h = (int)((parent_area->h - gap) * ratio);
 
         *right_area = *parent_area;
         right_area->y += (left_area->h + gap);
         right_area->h = (int)((parent_area->h - gap) * (1 - ratio));
+    } else {
+        *left_area = *parent_area;
+        *right_area = *parent_area;
     }
 }
 

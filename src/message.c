@@ -241,6 +241,8 @@ extern bool g_verbose;
 #define ARGUMENT_COMMON_SEL_EAST         "east"
 #define ARGUMENT_COMMON_SEL_SOUTH        "south"
 #define ARGUMENT_COMMON_SEL_WEST         "west"
+#define ARGUMENT_COMMON_SEL_ABOVE        "above"
+#define ARGUMENT_COMMON_SEL_BELOW        "below"
 #define ARGUMENT_COMMON_SEL_MOUSE        "mouse"
 #define ARGUMENT_COMMON_SEL_STACK        "stack"
 #define ARGUMENT_COMMON_SEL_STACK_PREFIX "stack."
@@ -1134,6 +1136,10 @@ static struct selector parse_insert_selector(FILE *rsp, char **message)
         result.dir = DIR_SOUTH;
     } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_WEST)) {
         result.dir = DIR_WEST;
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_ABOVE)) {
+        result.dir = DIR_ABOVE;
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_BELOW)) {
+        result.dir = DIR_BELOW;
     } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_STACK)) {
         result.dir = STACK;
     } else {

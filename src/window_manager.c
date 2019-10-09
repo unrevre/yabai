@@ -1701,6 +1701,12 @@ enum window_op_error window_manager_set_window_insertion(struct space_manager *s
     } else if (direction == DIR_WEST) {
         node->split = SPLIT_Y;
         node->child = CHILD_FIRST;
+    } else if (direction == DIR_ABOVE) {
+        node->split = SPLIT_Z;
+        node->child = CHILD_SECOND;
+    } else if (direction == DIR_BELOW) {
+        node->split = SPLIT_Z;
+        node->child = CHILD_FIRST;
     }
 
     node->insert_dir = direction;

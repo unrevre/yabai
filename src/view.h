@@ -121,6 +121,7 @@ static const char *window_node_child_str[] =
 enum window_node_split
 {
     SPLIT_NONE,
+    SPLIT_Z,
     SPLIT_Y,
     SPLIT_X,
     SPLIT_AUTO
@@ -129,6 +130,7 @@ enum window_node_split
 static const char *window_node_split_str[] =
 {
     "none",
+    "normal",
     "vertical",
     "horizontal",
     "auto"
