@@ -136,6 +136,7 @@ static inline enum window_node_child window_node_get_child(struct window_node *n
 static inline enum window_node_split window_node_get_split(struct window_node *node)
 {
     if (node->split                != SPLIT_NONE) return node->split;
+    if (node->parent != NULL && node->parent->split == SPLIT_Z) return SPLIT_Z;
     if (g_space_manager.split_type != SPLIT_AUTO) return g_space_manager.split_type;
     return node->area.w >= node->area.h ? SPLIT_Y : SPLIT_X;
 }
