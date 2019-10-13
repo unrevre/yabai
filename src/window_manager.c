@@ -984,6 +984,42 @@ struct window *window_manager_find_closest_managed_window_in_direction(struct wi
     return window_manager_find_window(wm, closest->window_order[0]);
 }
 
+struct window *window_manager_find_managed_window_above(struct window_manager *wm, struct window *window)
+{
+    struct view *view = window_manager_find_managed_window(wm, window);
+    if (!view) return NULL;
+
+    struct window_node *node = view_find_window_node(view, window->id);
+    if (!node) return NULL;
+
+    struct window_node *next = window_node_find_next_leaf(node);
+    if (!next) return NULL;
+
+    struct window_node *ancestor = window_node_find_common_ancestor(view->root, node, next);
+    if (!window_nodes_are_stacked(ancestor, node) || !window_nodes_are_stacked(ancestor, next))
+        return NULL;
+
+    return window_manager_find_window(wm, next->window_order[0]);
+}
+
+struct window *window_manager_find_managed_window_below(struct window_manager *wm, struct window *window)
+{
+    struct view *view = window_manager_find_managed_window(wm, window);
+    if (!view) return NULL;
+
+    struct window_node *node = view_find_window_node(view, window->id);
+    if (!node) return NULL;
+
+    struct window_node *prev = window_node_find_prev_leaf(node);
+    if (!prev) return NULL;
+
+    struct window_node *ancestor = window_node_find_common_ancestor(view->root, node, prev);
+    if (!window_nodes_are_stacked(ancestor, node) || !window_nodes_are_stacked(ancestor, prev))
+        return NULL;
+
+    return window_manager_find_window(wm, prev->window_order[0]);
+}
+
 struct window *window_manager_find_prev_managed_window(struct space_manager *sm, struct window_manager *wm, struct window *window)
 {
     struct view *view = space_manager_find_view(sm, space_manager_active_space());
