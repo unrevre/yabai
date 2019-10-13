@@ -97,7 +97,7 @@ RULE_SEL    := <index> | LABEL
 
 SIGNAL_SEL  := <index> | LABEL
 
-DIR_SEL     := north | east | south | west
+DIR_SEL     := north | east | south | west | above | below
 
 STACK_SEL   := stack.prev | stack.next | stack.first | stack.last | stack.recent | stack.<index (1-based)>
 
