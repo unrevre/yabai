@@ -114,10 +114,6 @@ extern bool g_verbose;
 #define COMMAND_WINDOW_DISPLAY "--display"
 #define COMMAND_WINDOW_SPACE   "--space"
 
-#define ARGUMENT_WINDOW_DIR_NORTH     "north"
-#define ARGUMENT_WINDOW_DIR_EAST      "east"
-#define ARGUMENT_WINDOW_DIR_SOUTH     "south"
-#define ARGUMENT_WINDOW_DIR_WEST      "west"
 #define ARGUMENT_WINDOW_DIR_ABOVE     "above"
 #define ARGUMENT_WINDOW_DIR_BELOW     "below"
 #define ARGUMENT_WINDOW_SEL_MOUSE     "mouse"
@@ -194,6 +190,10 @@ extern bool g_verbose;
 #define ARGUMENT_COMMON_SEL_FIRST  "first"
 #define ARGUMENT_COMMON_SEL_LAST   "last"
 #define ARGUMENT_COMMON_SEL_RECENT "recent"
+#define ARGUMENT_COMMON_SEL_NORTH  "north"
+#define ARGUMENT_COMMON_SEL_EAST   "east"
+#define ARGUMENT_COMMON_SEL_SOUTH  "south"
+#define ARGUMENT_COMMON_SEL_WEST   "west"
 /* ----------------------------------------------------------------------------- */
 
 static bool token_equals(struct token token, char *match)
@@ -823,7 +823,51 @@ static struct selector parse_display_selector(FILE *rsp, char **message, uint32_
         .did_parse = true
     };
 
-    if (token_equals(result.token, ARGUMENT_COMMON_SEL_PREV)) {
+    if (token_equals(result.token, ARGUMENT_COMMON_SEL_NORTH)) {
+        if (acting_did) {
+            uint32_t did = display_manager_find_closest_display_in_direction(acting_did, DIR_NORTH);
+            if (did) {
+                result.did = did;
+            } else {
+                daemon_fail(rsp, "could not locate a northward display.\n");
+            }
+        } else {
+            daemon_fail(rsp, "could not locate the selected display.\n");
+        }
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_EAST)) {
+        if (acting_did) {
+            uint32_t did = display_manager_find_closest_display_in_direction(acting_did, DIR_EAST);
+            if (did) {
+                result.did = did;
+            } else {
+                daemon_fail(rsp, "could not locate a eastward display.\n");
+            }
+        } else {
+            daemon_fail(rsp, "could not locate the selected display.\n");
+        }
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_SOUTH)) {
+        if (acting_did) {
+            uint32_t did = display_manager_find_closest_display_in_direction(acting_did, DIR_SOUTH);
+            if (did) {
+                result.did = did;
+            } else {
+                daemon_fail(rsp, "could not locate a southward display.\n");
+            }
+        } else {
+            daemon_fail(rsp, "could not locate the selected display.\n");
+        }
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_WEST)) {
+        if (acting_did) {
+            uint32_t did = display_manager_find_closest_display_in_direction(acting_did, DIR_WEST);
+            if (did) {
+                result.did = did;
+            } else {
+                daemon_fail(rsp, "could not locate a westward display.\n");
+            }
+        } else {
+            daemon_fail(rsp, "could not locate the selected display.\n");
+        }
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_PREV)) {
         if (acting_did) {
             uint32_t did = display_manager_prev_display_id(acting_did);
             if (did) {
@@ -969,7 +1013,7 @@ static struct selector parse_window_selector(FILE *rsp, char **message, struct w
         .did_parse = true
     };
 
-    if (token_equals(result.token, ARGUMENT_WINDOW_DIR_NORTH)) {
+    if (token_equals(result.token, ARGUMENT_COMMON_SEL_NORTH)) {
         if (acting_window) {
             struct window *closest_window = window_manager_find_closest_window_in_direction(&g_window_manager, acting_window, DIR_NORTH);
             if (closest_window) {
@@ -980,7 +1024,7 @@ static struct selector parse_window_selector(FILE *rsp, char **message, struct w
         } else {
             daemon_fail(rsp, "could not locate the selected window.\n");
         }
-    } else if (token_equals(result.token, ARGUMENT_WINDOW_DIR_EAST)) {
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_EAST)) {
         if (acting_window) {
             struct window *closest_window = window_manager_find_closest_window_in_direction(&g_window_manager, acting_window, DIR_EAST);
             if (closest_window) {
@@ -991,7 +1035,7 @@ static struct selector parse_window_selector(FILE *rsp, char **message, struct w
         } else {
             daemon_fail(rsp, "could not locate the selected window.\n");
         }
-    } else if (token_equals(result.token, ARGUMENT_WINDOW_DIR_SOUTH)) {
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_SOUTH)) {
         if (acting_window) {
             struct window *closest_window = window_manager_find_closest_window_in_direction(&g_window_manager, acting_window, DIR_SOUTH);
             if (closest_window) {
@@ -1002,7 +1046,7 @@ static struct selector parse_window_selector(FILE *rsp, char **message, struct w
         } else {
             daemon_fail(rsp, "could not locate the selected window.\n");
         }
-    } else if (token_equals(result.token, ARGUMENT_WINDOW_DIR_WEST)) {
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_WEST)) {
         if (acting_window) {
             struct window *closest_window = window_manager_find_closest_window_in_direction(&g_window_manager, acting_window, DIR_WEST);
             if (closest_window) {
@@ -1131,13 +1175,13 @@ static struct selector parse_dir_selector(FILE *rsp, char **message)
         .did_parse = true
     };
 
-    if (token_equals(result.token, ARGUMENT_WINDOW_DIR_NORTH)) {
+    if (token_equals(result.token, ARGUMENT_COMMON_SEL_NORTH)) {
         result.dir = DIR_NORTH;
-    } else if (token_equals(result.token, ARGUMENT_WINDOW_DIR_EAST)) {
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_EAST)) {
         result.dir = DIR_EAST;
-    } else if (token_equals(result.token, ARGUMENT_WINDOW_DIR_SOUTH)) {
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_SOUTH)) {
         result.dir = DIR_SOUTH;
-    } else if (token_equals(result.token, ARGUMENT_WINDOW_DIR_WEST)) {
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_WEST)) {
         result.dir = DIR_WEST;
     } else if (token_equals(result.token, ARGUMENT_WINDOW_DIR_ABOVE)) {
         result.dir = DIR_ABOVE;
