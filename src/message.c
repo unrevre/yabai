@@ -140,6 +140,7 @@ extern bool g_verbose;
 #define ARGUMENT_WINDOW_TOGGLE_NATIVE "native-fullscreen"
 #define ARGUMENT_WINDOW_TOGGLE_EXPOSE "expose"
 #define ARGUMENT_WINDOW_TOGGLE_PIP    "pip"
+#define ARGUMENT_WINDOW_TOGGLE_BORDER "border"
 /* ----------------------------------------------------------------------------- */
 
 /* --------------------------------DOMAIN QUERY--------------------------------- */
@@ -165,7 +166,7 @@ extern bool g_verbose;
 #define ARGUMENT_RULE_KEY_MANAGE  "manage"
 #define ARGUMENT_RULE_KEY_STICKY  "sticky"
 #define ARGUMENT_RULE_KEY_LAYER   "layer"
-#define ARGUMENT_RULE_KEY_ON_TOP  "topmost"
+#define ARGUMENT_RULE_KEY_BORDER  "border"
 #define ARGUMENT_RULE_KEY_FULLSCR "native-fullscreen"
 #define ARGUMENT_RULE_KEY_GRID    "grid"
 #define ARGUMENT_RULE_KEY_LABEL   "label"
@@ -1650,6 +1651,8 @@ static void handle_domain_window(FILE *rsp, struct token domain, char *message)
             window_manager_toggle_window_expose(&g_window_manager, acting_window);
         } else if (token_equals(value, ARGUMENT_WINDOW_TOGGLE_PIP)) {
             window_manager_toggle_window_pip(&g_space_manager, &g_window_manager, acting_window);
+        } else if (token_equals(value, ARGUMENT_WINDOW_TOGGLE_BORDER)) {
+            window_manager_toggle_window_border(&g_window_manager, acting_window);
         } else {
             daemon_fail(rsp, "unknown value '%.*s' given to command '%.*s' for domain '%.*s'\n", value.length, value.text, command.length, command.text, domain.length, domain.text);
         }
@@ -1967,6 +1970,17 @@ static void handle_domain_rule(FILE *rsp, struct token domain, char *message)
                     rule.layer = LAYER_NORMAL;
                 } else if (string_equals(value, ARGUMENT_WINDOW_LAYER_ABOVE)) {
                     rule.layer = LAYER_ABOVE;
+                } else {
+                    daemon_fail(rsp, "invalid value '%s' for key '%s'\n", value, key);
+                    did_parse = false;
+                }
+            } else if (string_equals(key, ARGUMENT_RULE_KEY_BORDER)) {
+                if (exclusion) unsupported_exclusion = key;
+
+                if (string_equals(value, ARGUMENT_COMMON_VAL_ON)) {
+                    rule.border = RULE_PROP_ON;
+                } else if (string_equals(value, ARGUMENT_COMMON_VAL_OFF)) {
+                    rule.border = RULE_PROP_OFF;
                 } else {
                     daemon_fail(rsp, "invalid value '%s' for key '%s'\n", value, key);
                     did_parse = false;
