@@ -200,6 +200,7 @@ extern bool g_verbose;
 #define ARGUMENT_COMMON_SEL_EAST   "east"
 #define ARGUMENT_COMMON_SEL_SOUTH  "south"
 #define ARGUMENT_COMMON_SEL_WEST   "west"
+#define ARGUMENT_COMMON_SEL_MOUSE  "mouse"
 /* ----------------------------------------------------------------------------- */
 
 static bool token_equals(struct token token, char *match)
@@ -963,6 +964,13 @@ static struct selector parse_display_selector(FILE *rsp, char **message, uint32_
         }
     } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_RECENT)) {
         result.did = g_display_manager.last_display_id;
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_MOUSE)) {
+        uint32_t did = display_manager_cursor_display_id();
+        if (did) {
+            result.did = did;
+        } else {
+            daemon_fail(rsp, "could not locate display containing cursor.\n");
+        }
     } else if (token_is_valid(result.token)) {
         int arrangement_index = 0;
         if (token_to_int(result.token, &arrangement_index)) {
@@ -1033,6 +1041,13 @@ static struct selector parse_space_selector(FILE *rsp, char **message, uint64_t 
         }
     } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_RECENT)) {
         result.sid = g_space_manager.last_space_id;
+    } else if (token_equals(result.token, ARGUMENT_COMMON_SEL_MOUSE)) {
+        uint64_t sid = space_manager_cursor_space();
+        if (sid) {
+            result.sid = sid;
+        } else {
+            daemon_fail(rsp, "could not locate space containing cursor.\n");
+        }
     } else if (token_is_valid(result.token)) {
         int mci = 0;
         if (token_to_int(result.token, &mci)) {

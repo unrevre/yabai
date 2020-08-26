@@ -82,9 +82,9 @@ DIR_SEL     := north | east | south | west | above | below
 
 WINDOW_SEL  := prev | next | first | last | recent | mouse | largest | smallest | DIR_SEL | <window id>
 
-DISPLAY_SEL := prev | next | first | last | recent | DIR_SEL | <arrangement index (1-based)>
+DISPLAY_SEL := prev | next | first | last | recent | mouse | DIR_SEL | <arrangement index (1-based)>
 
-SPACE_SEL   := prev | next | first | last | recent | <mission-control index (1-based)> | LABEL
+SPACE_SEL   := prev | next | first | last | recent | mouse | <mission-control index (1-based)> | LABEL
 ----
 
 Domains
