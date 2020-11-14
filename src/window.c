@@ -173,7 +173,7 @@ void window_serialize(FILE *rsp, struct window *window)
             window->id,
             window->application->pid,
             window->application->name,
-            escaped_title ? escaped_title : title ? title : "",
+            escaped_title ? escaped_title : title,
             frame.origin.x, frame.origin.y,
             frame.size.width, frame.size.height,
             window_level(window),
@@ -217,6 +217,8 @@ char *window_title(struct window *window)
     if (value) {
         title = cfstring_copy(value);
         CFRelease(value);
+    } else {
+        title = string_copy("");
     }
 
     return title;
