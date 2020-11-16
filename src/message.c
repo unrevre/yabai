@@ -330,13 +330,14 @@ static bool token_is_float(struct token token, float *value)
     return sscanf(buffer, "%f", value) == 1;
 }
 
-static char *token_to_string(struct token token)
+static char *token_to_string(struct token token, bool temp)
 {
-    char *result = malloc(token.length + 1);
-    if (result) {
-        memcpy(result, token.text, token.length);
-        result[token.length] = '\0';
-    }
+    unsigned int length = token.length + 1;
+    char *result = temp ? ts_alloc(length) : malloc(length);
+    if (!result) return NULL;
+
+    memcpy(result, token.text, token.length);
+    result[token.length] = '\0';
     return result;
 }
 
@@ -353,7 +354,7 @@ static struct token_value token_to_value(struct token token, bool allocate_strin
             value.type = TOKEN_TYPE_FLOAT;
         } else if (!allocate_string) {
             value.type = TOKEN_TYPE_STRING;
-        } else if ((value.string_value = token_to_string(token))) {
+        } else if ((value.string_value = token_to_string(token, true))) {
             value.type = TOKEN_TYPE_STRING;
         } else {
             value.type = TOKEN_TYPE_UNKNOWN;
@@ -472,7 +473,7 @@ static bool parse_label(FILE *rsp, char **message, enum label_type type, char **
     } break;
     }
 
-    *label = token_to_string(token);
+    *label = token_to_string(token, false);
     return true;
 }
 
@@ -630,7 +631,7 @@ static struct selector parse_space_selector(FILE *rsp, char **message, uint64_t 
 {
     struct selector result = { .token = get_token(message), .did_parse = true };
 
-    struct token_value value = token_to_value(result.token, false);
+    struct token_value value = token_to_value(result.token, true);
     if (value.type == TOKEN_TYPE_INT) {
         uint64_t sid = space_manager_mission_control_space(value.int_value);
         if (sid) {
@@ -685,7 +686,7 @@ static struct selector parse_space_selector(FILE *rsp, char **message, uint64_t 
                 daemon_fail(rsp, "could not locate space containing cursor.\n");
             }
         } else {
-            struct space_label *space_label = space_manager_get_space_for_label(&g_space_manager, result.token);
+            struct space_label *space_label = space_manager_get_space_for_label(&g_space_manager, value.string_value);
             if (space_label) {
                 result.did_parse = true;
                 result.sid = space_label->sid;
@@ -2101,7 +2102,6 @@ rnext:
             if (!rule_remove(value.string_value)) {
                 daemon_fail(rsp, "rule with label '%s' not found.\n", value.string_value);
             }
-            free(value.string_value);
         } else {
             daemon_fail(rsp, "value '%.*s' is not a valid option for RULE_SEL\n", value.token.length, value.token.text);
         }
@@ -2208,7 +2208,6 @@ snext:
             if (!event_signal_remove(value.string_value)) {
                 daemon_fail(rsp, "signal with label '%s' not found.\n", value.string_value);
             }
-            free(value.string_value);
         } else {
             daemon_fail(rsp, "value '%.*s' is not a valid option for SIGNAL_SEL\n", value.token.length, value.token.text);
         }
