@@ -80,8 +80,6 @@ static EVENT_CALLBACK(EVENT_HANDLER_APPLICATION_LAUNCHED)
 
     int window_count;
     struct window **window_list = window_manager_find_application_windows(&g_window_manager, application, &window_count);
-    if (!window_list) return EVENT_SUCCESS;
-
     uint32_t prev_window_id = g_window_manager.focused_window_id;
 
     for (int i = 0; i < window_count; ++i) {
@@ -116,7 +114,6 @@ static EVENT_CALLBACK(EVENT_HANDLER_APPLICATION_TERMINATED)
 
     int window_count;
     struct window **window_list = window_manager_find_application_windows(&g_window_manager, application, &window_count);
-    if (!window_list) goto end;
 
     for (int i = 0; i < window_count; ++i) {
         struct window *window = window_list[i];
@@ -133,7 +130,6 @@ static EVENT_CALLBACK(EVENT_HANDLER_APPLICATION_TERMINATED)
         window_destroy(window);
     }
 
-end:
     application_unobserve(application);
     application_destroy(application);
     return EVENT_SUCCESS;
@@ -220,8 +216,6 @@ static EVENT_CALLBACK(EVENT_HANDLER_APPLICATION_VISIBLE)
 
     int window_count;
     struct window **window_list = window_manager_find_application_windows(&g_window_manager, application, &window_count);
-    if (!window_list) return EVENT_SUCCESS;
-
     uint32_t prev_window_id = g_window_manager.last_window_id;
 
     for (int i = 0; i < window_count; ++i) {
@@ -251,7 +245,6 @@ static EVENT_CALLBACK(EVENT_HANDLER_APPLICATION_HIDDEN)
 
     int window_count;
     struct window **window_list = window_manager_find_application_windows(&g_window_manager, application, &window_count);
-    if (!window_list) return EVENT_SUCCESS;
 
     for (int i = 0; i < window_count; ++i) {
         struct window *window = window_list[i];
