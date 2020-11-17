@@ -600,13 +600,22 @@ void view_add_window_node(struct view *view, struct window *window)
     }
 }
 
-uint32_t *view_find_window_list(struct view *view)
+uint32_t *view_find_window_list(struct view *view, int *window_count)
 {
-    uint32_t *window_list = NULL;
+    *window_count = 0;
+
+    int capacity = 13;
+    uint32_t *window_list = ts_alloc(sizeof(uint32_t) * capacity);
 
     struct window_node *node = window_node_find_first_leaf(view->root);
     while (node) {
-        buf_push(window_list, node->window_id);
+        if (*window_count + 1 >= capacity) {
+            ts_expand(window_list, sizeof(uint32_t) * capacity, sizeof(uint32_t) * capacity);
+            capacity *= 2;
+        }
+
+        window_list[(*window_count)++] = node->window_id;
+
         node = window_node_find_next_leaf(node);
     }
 
