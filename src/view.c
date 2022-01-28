@@ -148,33 +148,34 @@ static void area_make_pair(struct view *view, struct window_node *node)
     float ratio = window_node_get_ratio(node);
     float gap   = window_node_get_gap(view);
 
+    node->left->area = node->area;
+    node->right->area = node->area;
+
+    node->split = split;
+
     if (split == SPLIT_Z) {
-        node->left->area = node->area;
-        node->right->area = node->area;
-    } else if (split == SPLIT_Y) {
-        node->left->area = node->area;
+        node->ratio = 1.f;
+    } else {
+        node->ratio = ratio;
+    }
+
+    if (split == SPLIT_Y) {
         node->left->area.w *= ratio;
         node->left->area.w -= gap;
 
-        node->right->area = node->area;
         node->right->area.x += (node->area.w * ratio);
         node->right->area.w *= (1 - ratio);
         node->right->area.x += gap;
         node->right->area.w -= gap;
-    } else {
-        node->left->area = node->area;
+    } else if (split == SPLIT_X) {
         node->left->area.h *= ratio;
         node->left->area.h -= gap;
 
-        node->right->area = node->area;
         node->right->area.y += (node->area.h * ratio);
         node->right->area.h *= (1 - ratio);
         node->right->area.y += gap;
         node->right->area.h -= gap;
     }
-
-    node->split = split;
-    node->ratio = ratio;
 }
 
 static inline bool window_node_is_occupied(struct window_node *node)
