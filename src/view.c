@@ -65,6 +65,12 @@ void insert_feedback_show(struct window_node *node)
         x3 = minx; y3 = maxy;
         x4 = midx; y4 = maxy;
     } break;
+    case DIR_ABOVE: case DIR_BELOW: {
+        x1 = minx; y1 = miny;
+        x2 = maxx; y2 = miny;
+        x3 = maxx; y3 = maxy;
+        x4 = minx; y4 = maxy;
+    } break;
     }
 
     CGRect fill = { {x1, y1}, { x3 - x1, y3 - y1 } };
