@@ -80,6 +80,9 @@ void insert_feedback_show(struct window_node *node)
     CGPathAddLineToPoint(outline, NULL, x3, y3);
     CGPathAddLineToPoint(outline, NULL, x4, y4);
 
+    if (node->insert_dir == DIR_ABOVE || node->insert_dir == DIR_BELOW)
+        CGPathAddLineToPoint(outline, NULL, x1, y1);
+
     SLSDisableUpdate(g_connection);
     SLSOrderWindow(g_connection, node->feedback_window.id, 0, node->window_id);
     SLSSetWindowShape(g_connection, node->feedback_window.id, 0.0f, 0.0f, frame_region);
